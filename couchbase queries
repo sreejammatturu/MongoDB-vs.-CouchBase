@@ -1,0 +1,38 @@
+count with sort:
+
+select compliment_count,count(compliment_count) as c 
+from `Tip`
+group by compliment_count
+order by compliment_count;
+
+
+Join:
+
+select o.name
+from `Business` as o left outer join Tip as c
+on keys o.business_id;
+
+
+Max:
+
+select max(review_count) 
+from `Business`;
+
+Min:
+
+select min(review_count) 
+from `Business`;
+
+Range:
+
+select *
+from `Business` b
+where b.review_count>4 and b.review_count<50;
+
+Point Query:
+
+select name,review_count
+from `Business`
+where review_count>1000;
+
+

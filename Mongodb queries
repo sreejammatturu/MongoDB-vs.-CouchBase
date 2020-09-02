@@ -1,0 +1,89 @@
+Point Query:
+
+db.business.find({"review_count": { "$gt": 1000}}, { "name": 1,"review_count": 1}).toArray();
+
+
+Count with SORT:
+
+db.tip.aggregate([ {$group: {_id:"$compliment_count",count:{$sum:1}}}, {$sort:{_id:1}} ])
+
+
+JOIN:
+
+db.business.aggregate([
+   {
+      $lookup: {
+         from: "tip",
+         localField: "business_id",    
+         foreignField: "business_id",  
+         as: "business_tip_join"
+      }
+   },
+   {
+      $replaceRoot: { newRoot: { $mergeObjects: [ { $arrayElemAt: [ "$business_tip_join", 0 ] }, "$$ROOT" ] } }
+   },
+   { $project: { business_tip_join: 0 } }
+])
+
+
+MIN:
+
+db.business.aggregate( [ {$group:{_id:null, min_review_count:{$min:"$review_count"}}} ])
+
+MAX:
+
+db.business.aggregate( [ {$group:{_id:null, max_review_count:{$max:"$review_count"}}} ])
+
+
+RANGE:
+
+db.business.find({review_count:{$gt:4,$lt:20}}).toArray()
+
+
+MAPREDUCE:
+
+map = function() { emit(1, 1); }
+reduce = function( key, values ) {
+    var count = 0;
+    values.forEach(function(v) {
+            count +=1;
+    });
+
+    return count;
+}
+
+db.business.mapReduce(map, reduce, {out: "query1", query:{review_count:{$gt:0,$lt:50}}});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
